@@ -12,7 +12,9 @@ add_executable (NothingDB
 				"include/storage/disk_manager.h" 
 				"src/storage/disk_manager.cpp" 
 				"include/buffer/lru_replacer.h" 
-				"src/buffer/lru_replacer.cpp")
+				"src/buffer/lru_replacer.cpp" 
+				"include/buffer/bufferpool_manager.h" 
+				"src/buffer/bufferpool_manager.cpp")
 
 target_include_directories(NothingDB PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 

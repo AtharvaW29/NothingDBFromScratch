@@ -5,62 +5,36 @@
 #include "storage/page.h"
 #include "storage/disk_manager.h"
 #include "buffer/lru_replacer.h"
+#include "buffer/bufferpool_manager.h"
 
 using namespace NothingDB;
 
 int main()
 {
-	DiskManager disk("nothing.db");
 
-	int page_id = disk.AllocatePage();
+    DiskManager disk("nothing.db");
 
-	Page write_page;
+    BufferPoolManager bpm(2, &disk);
 
-	write_page.SetPageId(page_id);
+    int page_id1;
+    Page* page1 = bpm.NewPage(&page_id1);
 
-	std::strcpy(write_page.GetData(), "Hello, NothingDB! This is a Persistant Database Page.");
-	disk.WritePage(write_page.GetPageId(), write_page.GetData());
+    std::strcpy(page1->GetData(), "Hello Page 1");
 
-	Page read_page;
+    bpm.UnpinPage(page_id1, true);
 
-	disk.ReadPage(page_id, read_page.GetData());
+    int page_id2;
+    Page* page2 = bpm.NewPage(&page_id2);
 
-	LRUReplacer lru(3);
+    std::strcpy(page2->GetData(), "Hello Page 2");
 
-	lru.UnPin(1);
-	lru.UnPin(2);
-	lru.UnPin(3);
+    bpm.UnpinPage(page_id2, true);
 
-	int victim = 2;
+    Page* fetched = bpm.FetchPage(page_id1);
 
-	lru.Victim(&victim);
+    std::cout << fetched->GetData() << std::endl;
 
-	std::cout << "Read from disk: "
-		<< read_page.GetData()
-		<< std::endl;
+    bpm.UnpinPage(page_id1, false);
 
-	for (int i = 0; i < 3; ++i) {
-		std::cout << "LRU Replacer Frame " << i << ": "
-			<< (lru.Size() > 0 ? "Unpinned" : "Pinned")
-			<< std::endl;
-	}
-
-	std::cout << "Vicitim Frame:"
-		<< victim
-		<< std::endl;
-
-	lru.Pin(2);
-
-	for (int i = 0; i < 3; ++i) {
-		std::cout << "LRU Replacer Frame " << i << ": "
-			<< (lru.Size() > 0 ? "Unpinned" : "Pinned")
-			<< std::endl;
-	}
-
-	std::cout << "Replacer Size:"
-		<< lru.Size()
-
-		<< std::endl;
-
-	return 0;
+    return 0;
 }
