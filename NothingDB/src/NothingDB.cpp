@@ -6,35 +6,33 @@
 #include "storage/disk_manager.h"
 #include "buffer/lru_replacer.h"
 #include "buffer/bufferpool_manager.h"
+#include "storage/table_page.h"
+#include "catalog/schema.h"
+#include "storage/tuple.h"
+
 
 using namespace NothingDB;
 
 int main()
 {
+	Schema schema({
+		Column("id", TypeId::INTEGER),
+		Column("name", TypeId::VARCHAR),
+		//Column("is_active", TypeId::BOOLEAN)
+		});
 
-    DiskManager disk("nothing.db");
+	Tuple tuple({
+		Value(1),
+		Value("Alice"),
+		//Value(true)
+	});
 
-    BufferPoolManager bpm(2, &disk);
+	auto values = tuple.DeSerialize(schema);
 
-    int page_id1;
-    Page* page1 = bpm.NewPage(&page_id1);
+	std::cout << "id: " << values[0].AsInt() << std::endl;
+	std::cout << "name: " << values[1].AsString() << std::endl;
+	//std::cout << "isactive: " << values[2].AsBool() << std::endl;
 
-    std::strcpy(page1->GetData(), "Hello Page 1");
-
-    bpm.UnpinPage(page_id1, true);
-
-    int page_id2;
-    Page* page2 = bpm.NewPage(&page_id2);
-
-    std::strcpy(page2->GetData(), "Hello Page 2");
-
-    bpm.UnpinPage(page_id2, true);
-
-    Page* fetched = bpm.FetchPage(page_id1);
-
-    std::cout << fetched->GetData() << std::endl;
-
-    bpm.UnpinPage(page_id1, false);
 
     return 0;
 }

@@ -14,7 +14,15 @@ add_executable (NothingDB
 				"include/buffer/lru_replacer.h" 
 				"src/buffer/lru_replacer.cpp" 
 				"include/buffer/bufferpool_manager.h" 
-				"src/buffer/bufferpool_manager.cpp")
+				"src/buffer/bufferpool_manager.cpp" 
+				"include/storage/table_page.h" 
+				"src/storage/table_page.cpp" 
+				"include/common/types.h" 
+				"include/catalog/column.h" 
+				"include/catalog/schema.h" 
+				"include/common/value.h" 
+				"include/storage/tuple.h" 
+				"src/storage/tuple.cpp")
 
 target_include_directories(NothingDB PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
