@@ -14,8 +14,8 @@ namespace NothingDB {
 		Value(const std::string& value) : type_(TypeId::VARCHAR),
             value_(value) {}
 
-		//Value(bool value) : type_(TypeId::BOOLEAN),
-		//	value_(value) {}
+		Value(bool value) : type_(TypeId::BOOLEAN),
+			value_(value) {}
 		
 		TypeId GetType() const {
 			return type_;
@@ -29,9 +29,9 @@ namespace NothingDB {
 			return std::get<std::string>(value_);
 		}
 
-		//bool AsBool() const {
-		//	return std::get<bool>(value_);
-		//}
+		bool AsBool() const {
+			return std::get<bool>(value_);
+		}
 
 	private:
 		TypeId type_;

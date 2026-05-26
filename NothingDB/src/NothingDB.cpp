@@ -18,20 +18,25 @@ int main()
 	Schema schema({
 		Column("id", TypeId::INTEGER),
 		Column("name", TypeId::VARCHAR),
-		//Column("is_active", TypeId::BOOLEAN)
+		Column("is_active", TypeId::BOOLEAN)
 		});
 
 	Tuple tuple({
 		Value(1),
-		Value("Alice"),
-		//Value(true)
+		Value(std::string("Alice")),
+		Value(true)
 	});
 
-	auto values = tuple.DeSerialize(schema);
+	try {
+		auto values = tuple.DeSerialize(schema);
 
-	std::cout << "id: " << values[0].AsInt() << std::endl;
-	std::cout << "name: " << values[1].AsString() << std::endl;
-	//std::cout << "isactive: " << values[2].AsBool() << std::endl;
+		std::cout << "id: " << values[0].AsInt() << std::endl;
+		std::cout << "name: " << values[1].AsString() << std::endl;
+		std::cout << "isactive: " << values[2].AsBool() << std::endl;
+	} catch (const std::runtime_error& e) {
+		std::cerr << "DeSerialize failed: " << e.what() << std::endl;
+		return 1;
+	}
 
 
     return 0;
