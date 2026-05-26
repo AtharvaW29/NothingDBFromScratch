@@ -22,7 +22,9 @@ add_executable (NothingDB
 				"include/catalog/schema.h" 
 				"include/common/value.h" 
 				"include/storage/tuple.h" 
-				"src/storage/tuple.cpp")
+				"src/storage/tuple.cpp" 
+				"include/storage/table_heap.h" 
+				"src/storage/table_heap.cpp")
 
 target_include_directories(NothingDB PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 

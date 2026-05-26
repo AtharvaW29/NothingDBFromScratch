@@ -12,7 +12,7 @@ namespace NothingDB {
 		explicit Tuple(const std::vector<Value>& values);
 
 		const std::vector<char>& GetData() const;
-
+		void SetData(const std::vector<char>& data);
 		std::vector<Value> DeSerialize(const Schema& schema) const;
 	private:
 		std::vector<char> data_;

@@ -55,6 +55,9 @@ namespace NothingDB {
     const std::vector<char>& Tuple::GetData() const {
         return data_;
     }
+	void Tuple::SetData(const std::vector<char>& data) {
+		data_ = data;
+	}
 
 	std::vector<Value> Tuple::DeSerialize(
 		const Schema& schema) const {

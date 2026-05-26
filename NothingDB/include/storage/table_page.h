@@ -3,8 +3,10 @@
 #include <cstdint>
 
 #include "storage/page.h"
+#include "storage/tuple.h"
 
 namespace NothingDB {
+	// Used it earlier as a temp structure
 	struct TupleInfo {
 		uint16_t offset;
 		uint16_t size;
@@ -14,9 +16,11 @@ namespace NothingDB {
 	public:
 		TablePage();
 		void Init();
-		bool InsertTuple(const char* data, uint16_t size);
-		bool GetTuple(uint16_t slot_num, char* buffer, uint16_t& size);
+		bool InsertTuple(const Tuple& tuple);
+		bool GetTuple(uint16_t slot_num, Tuple& tuple);
 		uint16_t GetTupleCount() const;
+		int GetNextPageId() const;
+		void SetNextPageId(int page_id);
 
 	private:
 		uint16_t* GetFreeSpacePointer();
