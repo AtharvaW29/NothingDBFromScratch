@@ -33,7 +33,7 @@ namespace NothingDB{
 		return *reinterpret_cast<const uint16_t*>(GetData() + sizeof(uint16_t));
 	}
 
-	bool TablePage::InsertTuple(const Tuple& tuple)
+	bool TablePage::InsertTuple(const Tuple& tuple, RID& rid)
 	{
 		const auto& tuple_data = tuple.GetData();
 		
@@ -53,8 +53,10 @@ namespace NothingDB{
 
 		tuple_info->offset = free_space_pointer;
 		tuple_info->size = size;
+		tuple_info->is_deleted = false;
 		*GetFreeSpacePointer() = free_space_pointer;
 		(*GetTupleCountPointer())++;
+		rid = RID(GetPageId(), tuple_count);
 
 		return true;
 	}
@@ -66,6 +68,10 @@ namespace NothingDB{
 		}
 
 		TupleInfo* tuple_info = GetTupleInfo(slot_num);
+
+		if (tuple_info->is_deleted) {
+			return false;
+		}
 
 		std::vector<char> tuple_data(tuple_info->size);
 		std::memcpy(
@@ -86,5 +92,35 @@ namespace NothingDB{
 
 	void TablePage::SetNextPageId(int page_id) {
 		*reinterpret_cast<int*>(GetData() + sizeof(uint16_t) * 2) = page_id;
+	}
+
+	bool TablePage::DeleteTuple(uint16_t slot_num) {
+		if (slot_num >= GetTupleCount()) {
+			return false; // Invalid slot number
+		}
+		TupleInfo* tuple_info = GetTupleInfo(slot_num);
+		if (tuple_info->is_deleted) {
+			return false; // Already deleted
+		}
+		tuple_info->is_deleted = true;
+		return true;
+	}
+
+	bool TablePage::UpdateTuple(uint16_t slot_num, const Tuple& new_tuple) {
+		if (slot_num >= GetTupleCount()) {
+			return false;
+		}
+		TupleInfo* tuple_info = GetTupleInfo(slot_num);
+		if (tuple_info->is_deleted) {
+			return false;
+		}
+		const auto& new_tuple_data = new_tuple.GetData();
+		uint16_t new_size = static_cast<uint16_t>(new_tuple_data.size());
+		if (new_size > tuple_info->size) {
+			return false; // New tuple is too large to fit in the existing space
+		}
+		std::memcpy(GetData() + tuple_info->offset, new_tuple_data.data(), new_size);
+		tuple_info->size = new_size;
+		return true;
 	}
 }

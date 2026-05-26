@@ -1,8 +1,5 @@
-﻿# CMakeList.txt : CMake project for NothingDB, include source and define
-# project specific logic here.
-#
-
-# Add source to this project's executable.
+﻿cmake_minimum_required(VERSION 4.2)
+# Add source
 add_executable (NothingDB   
 				"include/common/config.h" 
 				"include/storage/page.h" 
@@ -24,7 +21,7 @@ add_executable (NothingDB
 				"include/storage/tuple.h" 
 				"src/storage/tuple.cpp" 
 				"include/storage/table_heap.h" 
-				"src/storage/table_heap.cpp")
+				"src/storage/table_heap.cpp" "include/storage/rid.h")
 
 target_include_directories(NothingDB PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 

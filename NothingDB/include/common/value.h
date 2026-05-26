@@ -6,13 +6,16 @@
 #include "common/types.h"
 
 namespace NothingDB {
-    class Value {
-    public:
-        Value(int value) : type_(TypeId::INTEGER),
+	class Value {
+	public:
+		Value(int value) : type_(TypeId::INTEGER),
 			value_(value) {}
 
 		Value(const std::string& value) : type_(TypeId::VARCHAR),
-            value_(value) {}
+			value_(value) {}
+
+		Value(const char* value) : type_(TypeId::VARCHAR),
+			value_(std::string(value)) {}
 
 		Value(bool value) : type_(TypeId::BOOLEAN),
 			value_(value) {}

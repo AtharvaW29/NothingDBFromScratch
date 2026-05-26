@@ -2,8 +2,6 @@
 
 NothingDB is a relational database management system being built from scratch in modern C++.
 
-The project focuses on understanding core database internals including:
-
 - Page-based storage
 - Disk management
 - Buffer pool management
@@ -16,10 +14,11 @@ The project focuses on understanding core database internals including:
 ## Current Progress
 
 ### Implemented
-- Fixed-size page abstraction
-- Persistent disk storage
-- Page allocation system
-- Binary page read/write operations
+- Tuple Lifecycle Management
+- Logical Deletion
+- RID-Based Updates
+- Stable Tuple Addressing
+- Visibility Filtering
 
 ## Tech Stack
 

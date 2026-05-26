@@ -6,7 +6,7 @@ namespace NothingDB {
 		(buffer_pool_manager), first_page_id_(INVALID_PAGE_ID) {
 	}
 
-	bool TableHeap::InsertTuple(const Tuple& tuple) {
+	bool TableHeap::InsertTuple(const Tuple& tuple, RID& rid) {
 		if (first_page_id_ == INVALID_PAGE_ID)
 		{
 			int new_page_id;
@@ -30,7 +30,7 @@ namespace NothingDB {
 				return false; // Failed to fetch page
 			}
 			auto* table_page = reinterpret_cast<TablePage*>(page);
-			if (table_page->InsertTuple(tuple))
+			if (table_page->InsertTuple(tuple, rid))
 			{
 				buffer_pool_manager_->UnpinPage(current_page_id, true);
 				return true; // Successfully inserted
@@ -87,5 +87,41 @@ namespace NothingDB {
 			current_page_id = next_page_id; // Move to the next page
 		}
 		return tuples;
+	}
+
+	bool TableHeap::GetTuple(const RID& rid, Tuple& tuple) {
+		Page* page = buffer_pool_manager_->FetchPage(rid.GetPageId());
+		if (page == nullptr)
+		{
+			return false;
+		}
+		auto* table_page = reinterpret_cast<TablePage*>(page);
+		bool result = table_page->GetTuple(rid.GetSlotNum(), tuple);
+		buffer_pool_manager_->UnpinPage(rid.GetPageId(), false);
+		return result;
+	}
+
+	bool TableHeap::DeleteTuple(const RID& rid) {
+		Page* page = buffer_pool_manager_->FetchPage(rid.GetPageId());
+		if (page == nullptr)
+		{
+			return false;
+		}
+		auto* table_page = reinterpret_cast<TablePage*>(page);
+		bool result = table_page->DeleteTuple(rid.GetSlotNum());
+		buffer_pool_manager_->UnpinPage(rid.GetPageId(), result);
+		return result;
+	}
+
+	bool TableHeap::UpdateTuple(const RID& rid, const Tuple& tuple) {
+		Page* page = buffer_pool_manager_->FetchPage(rid.GetPageId());
+		if (page == nullptr)
+		{
+			return false;
+		}
+		auto* table_page = reinterpret_cast<TablePage*>(page);
+		bool result = table_page->UpdateTuple(rid.GetSlotNum(), tuple);
+		buffer_pool_manager_->UnpinPage(rid.GetPageId(), result);
+		return result;
 	}
 }

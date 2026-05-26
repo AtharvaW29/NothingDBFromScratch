@@ -16,48 +16,62 @@ using namespace NothingDB;
 
 int main()
 {
-	DiskManager disk("nothing.db");
+    DiskManager disk("nothing.db");
 
-	BufferPoolManager bpm(10, &disk);
+    BufferPoolManager bpm(10, &disk);
 
-	TableHeap table(&bpm);
+    TableHeap table(&bpm);
 
-	Schema schema({
-		Column("id", TypeId::INTEGER),
-		Column("name", TypeId::VARCHAR),
-		Column("is_active", TypeId::BOOLEAN)
-		});
+    Schema schema({
+        Column("id", TypeId::INTEGER),
+        Column("name", TypeId::VARCHAR),
+        Column("active", TypeId::BOOLEAN)
+        });
 
-	table.InsertTuple(Tuple({
-		Value(1),
-		Value(std::string("Alice")),
-		Value(true)
-		}));
-	
-	table.InsertTuple(Tuple({
-		Value(2),
-		Value(std::string("Bob")),
-		Value(false)
-		}));
+    RID rid1;
+    RID rid2;
 
-	
-	auto tuples = table.Scan();
-	std::cout << "id | name | is_active" << std::endl;
-	for(auto& tuple: tuples)
-	{
-		{
-			auto values =
-				tuple.DeSerialize(schema);
+    table.InsertTuple(
+        Tuple({
+            Value(1),
+            Value("Alice"),
+            Value(true)
+            }),
+        rid1);
 
-			std::cout
-				<< values[0].AsInt()
-				<< " | "
-				<< values[1].AsString()
-				<< " | "
-				<< values[2].AsBool()
-				<< std::endl;
-		}
-	}
+    table.InsertTuple(
+        Tuple({
+            Value(2),
+            Value("Bob"),
+            Value(false)
+            }),
+        rid2);
+
+    table.UpdateTuple(
+        rid1,
+        Tuple({
+            Value(1),
+            Value("Alice --Updated"),
+            Value(true)
+            }));
+
+    table.DeleteTuple(rid2);
+
+    auto tuples = table.Scan();
+
+    for (auto& tuple : tuples) {
+
+        auto values =
+            tuple.DeSerialize(schema);
+
+        std::cout
+            << values[0].AsInt()
+            << " | "
+            << values[1].AsString()
+            << " | "
+            << values[2].AsBool()
+            << std::endl;
+    }
 
     return 0;
 }
