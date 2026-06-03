@@ -43,7 +43,7 @@ int main()
         Tuple({
             Value(2),
             Value("Bob"),
-            Value(false)
+            Value(true)
             }),
         rid2);
 
@@ -51,11 +51,11 @@ int main()
         rid1,
         Tuple({
             Value(1),
-            Value("Alice --Updated"),
-            Value(true)
+            Value("Alice --inactive"),
+            Value(false)
             }));
 
-    table.DeleteTuple(rid2);
+    //table.DeleteTuple(rid2);
 
     auto tuples = table.Scan();
 

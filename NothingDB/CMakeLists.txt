@@ -21,7 +21,7 @@ add_executable (NothingDB
 				"include/storage/tuple.h" 
 				"src/storage/tuple.cpp" 
 				"include/storage/table_heap.h" 
-				"src/storage/table_heap.cpp" "include/storage/rid.h")
+				"src/storage/table_heap.cpp" "include/storage/rid.h" "include/index/bplus_tree_node.h" "include/index/bplus_tree.h" "src/index/bplus_tree.cpp" "src/index/bplus_tree_node.cpp" )
 
 target_include_directories(NothingDB PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
