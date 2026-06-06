@@ -1,4 +1,5 @@
 #pragma once
+
 #include <vector>
 
 namespace NothingDB {
@@ -6,11 +7,9 @@ namespace NothingDB {
 	template<typename KeyType, typename ValueType>
 	class BPlusTreeNode {
 	public:
-		bool is_leaf;
-		
-		std::vector<KeyType> keys_;
-		
 		virtual ~BPlusTreeNode() = default;
+		bool is_leaf_;
+		std::vector<KeyType> keys_;
 	};
 
 	template<typename KeyType, typename ValueType>
@@ -21,19 +20,8 @@ namespace NothingDB {
 		BPlusTreeLeafNode* next_;
 		BPlusTreeLeafNode()
 		{
-			this->is_leaf = true;
-			next_ = nullptr;
-		}
-	};
-
-	template<typename KeyType, typename ValueType>
-	class BPlusTreeInternalNode : public BPlusTreeNode<KeyType, ValueType>
-	{
-	public:
-		std::vector<BPlusTreeNode<KeyType, ValueType>*> children_;
-		BPlusTreeInternalNode()
-		{
-			this->is_leaf = false;
+			this->is_leaf_ = true;
+			this->next_ = nullptr;
 		}
 	};
 }
