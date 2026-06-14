@@ -19,10 +19,13 @@ namespace NothingDB {
 				const KeyType& key,
 				ValueType& value);
 
+			static constexpr int ORDER = 4;
+			void SplitRootLeaf();
+
 			// for debugging
-			void PrintKeys();
+			void PrintTree();
 	private:
-		BPlusTreeLeafNode<KeyType, ValueType>* root_;
+		BPlusTreeNode<KeyType, ValueType>* root_;
 	};
 
 }
