@@ -9,7 +9,9 @@ namespace NothingDB {
 	public:
 		virtual ~BPlusTreeNode() = default;
 		bool is_leaf_;
+		BPlusTreeNode<KeyType, ValueType>* parent_;
 		std::vector<KeyType> keys_;
+		BPlusTreeNode(): parent_(nullptr) {}
 	};
 
 	template<typename KeyType, typename ValueType>

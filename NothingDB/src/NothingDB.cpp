@@ -22,15 +22,18 @@ int main()
 	BPlusTree<int, RID> bptree;
 	bptree.Insert(5, RID(1, 1));
 	bptree.Insert(10, RID(2, 2));
-	bptree.Insert(20, RID(3, 3));
-	bptree.Insert(15, RID(4, 4));
+	bptree.Insert(15, RID(3, 3));
+	bptree.Insert(20, RID(4, 4));
+	bptree.Insert(25, RID(5, 5));
+	bptree.Insert(30, RID(6, 6));
+	bptree.Insert(35, RID(7, 7));
 
 	RID rid;
 
-	//if (bptree.Search(25, rid)) { 
-	//	std::cout << rid.GetPageId()
-	//		<< "," << rid.GetSlotNum() << std::endl;
-	//}
+	if (bptree.Search(20, rid)) { 
+		std::cout << rid.GetPageId()
+			<< "," << rid.GetSlotNum() << std::endl;
+	}
 
 	bptree.PrintTree();
 

@@ -22,10 +22,13 @@ namespace NothingDB {
 			static constexpr int ORDER = 4;
 			void SplitRootLeaf();
 
+			void SplitLeaf(BPlusTreeLeafNode<KeyType, ValueType>* leaf);
+
 			// for debugging
 			void PrintTree();
 	private:
 		BPlusTreeNode<KeyType, ValueType>* root_;
+		BPlusTreeLeafNode<KeyType, ValueType>* FindLeaf(const KeyType& key);
 	};
 
 }

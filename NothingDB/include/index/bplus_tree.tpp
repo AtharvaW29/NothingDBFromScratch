@@ -45,7 +45,7 @@ void BPlusTree<KeyType, ValueType>::Insert(
 		{
 			auto* internal = static_cast<BPlusTreeInternalNode<KeyType, ValueType>*>(current);
 			auto pos =
-				std::lower_bound(
+				std::upper_bound(
 					internal->keys_.begin(),
 					internal->keys_.end(),
 					key);
@@ -66,6 +66,7 @@ void BPlusTree<KeyType, ValueType>::Insert(
         {
 			// TODO: create a more fenerics Split function that can handle 
             // splitting any node, not just the root.
+            SplitLeaf(target_leaf);
         }
     }
 }
@@ -75,24 +76,22 @@ bool BPlusTree<KeyType, ValueType>::Search(
     const KeyType& key,
     ValueType& value) {
 
-    auto it =
-        std::lower_bound(
-            root_->keys_.begin(),
-            root_->keys_.end(),
-            key);
+    auto* leaf = FindLeaf(key);
+    auto it = std::lower_bound(
+        leaf->keys_.begin(),
+        leaf->keys_.end(),
+        key);
 
-    if (it == root_->keys_.end()) {
-        return false;
-    }
-
-    if (*it != key) {
-        return false;
-    }
-
-    size_t index =
-        it - root_->keys_.begin();
-
-    value = root_->values_[index];
+    if(it == leaf->keys_.end())
+        {
+           return false;
+        }
+    if(*it != key)
+        {
+            return false;
+        }
+    size_t index = it - leaf->keys_.begin();
+    value = leaf->values_[index];
 
     return true;
 }
@@ -123,9 +122,73 @@ void BPlusTree<KeyType, ValueType>::SplitRootLeaf()
     new_root->children_.push_back(old_leaf);
     new_root->children_.push_back(new_leaf);
 
+    // Updatingf assign patterns because of a memory corrutpion exception
+    old_leaf->parent_ = new_root;
+    new_leaf->parent_ = new_root;
+    new_root->parent_ = nullptr;
+
     root_ = new_root;
 }
 
+template<typename KeyType, typename ValueType>
+BPlusTreeLeafNode<KeyType, ValueType>*
+BPlusTree<KeyType, ValueType>::FindLeaf(const KeyType& key)
+{
+    auto* current = root_;
+    while(!current->is_leaf_)
+    {
+        auto* internal = static_cast<
+            BPlusTreeInternalNode<KeyType, ValueType>*>(current);
+
+        auto pos = std::upper_bound(
+            internal->keys_.begin(),
+            internal->keys_.end(),
+            key
+        );
+        size_t index = pos - internal->keys_.begin();
+        current = internal->children_[index];
+    }
+    return static_cast<BPlusTreeLeafNode<KeyType, ValueType>*>(current);
+}
+
+template<typename KeyType, typename ValueType>
+void BPlusTree<KeyType, ValueType>::SplitLeaf(
+    BPlusTreeLeafNode<KeyType, ValueType>* leaf)
+{
+    auto* new_leaf = new BPlusTreeLeafNode<KeyType, ValueType>();
+    size_t mid = leaf->keys_.size() / 2;
+
+    new_leaf->keys_.assign(leaf->keys_.begin() + mid, leaf->keys_.end());
+    new_leaf->values_.assign(leaf->values_.begin() + mid, leaf->values_.end());
+
+    leaf->keys_.resize(mid);
+    leaf->values_.resize(mid);
+
+    new_leaf->next_ = leaf->next_;
+    leaf->next_ = new_leaf;
+
+    auto* parent = 
+    static_cast<BPlusTreeInternalNode<KeyType, ValueType>*>(leaf->parent_);
+
+    new_leaf->parent_ = parent;
+    KeyType separator = new_leaf->keys_[0];
+
+    auto pos = std::upper_bound(
+        parent->keys_.begin(),
+        parent->keys_.end(),
+        separator);
+
+    size_t index = pos - parent->keys_.begin();
+
+    parent->keys_.insert(pos, separator);
+    parent->children_.insert(
+        parent->children_.begin() + index+1, new_leaf);
+
+    //if (parent->keys.size() >= ORDER)
+    //{
+    //    SplitInternal(parent);
+    //}
+}
 
 template<typename KeyType, typename ValueType>
 void BPlusTree<KeyType, ValueType>::PrintTree() {
