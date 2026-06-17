@@ -20,22 +20,26 @@ int main()
 {
 
 	BPlusTree<int, RID> bptree;
-	bptree.Insert(5, RID(1, 1));
-	bptree.Insert(10, RID(2, 2));
-	bptree.Insert(15, RID(3, 3));
-	bptree.Insert(20, RID(4, 4));
-	bptree.Insert(25, RID(5, 5));
-	bptree.Insert(30, RID(6, 6));
-	bptree.Insert(35, RID(7, 7));
-
-	RID rid;
-
-	if (bptree.Search(20, rid)) { 
-		std::cout << rid.GetPageId()
-			<< "," << rid.GetSlotNum() << std::endl;
+	for (int i = 0; i <= 100; i++)
+	{
+		bptree.Insert(i, RID(i, i));
 	}
 
 	bptree.PrintTree();
-
+	for(int i = 0; i <= 100; i++)
+	{
+		RID rid;
+		bool found = bptree.Search(i, rid);
+		if(!found)
+		{
+			std::cout << "Missing" << i << std::endl;
+		}
+	}
+	std::cout << "Test Sequential Traversal ->" << std::endl;
+	for(auto iter = bptree.Begin(); iter != bptree.End(); ++iter)
+	{
+		auto [key, rid] = *iter;
+		std::cout << key << " ";
+	}
     return 0;
 }

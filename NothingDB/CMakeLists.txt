@@ -27,7 +27,10 @@ add_executable (NothingDB
 				"include/index/bplus_tree_node.h"
 				"include/index/bplus_tree.h" 
 				"src/index/bplus_tree.cpp" 
-				"src/index/bplus_tree_node.cpp" )
+				"src/index/bplus_tree_node.cpp"  
+				"include/index/bplus_tree_iterator.h" 
+				"include/catalog/index_info.h" 
+				"include/index/index.h")
 
 target_include_directories(NothingDB PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 

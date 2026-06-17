@@ -6,6 +6,7 @@
 #include "storage/table_page.h"
 #include "storage/tuple.h"
 #include "storage/rid.h"
+#include "index/index.h"
 
 
 namespace NothingDB{
@@ -22,6 +23,8 @@ namespace NothingDB{
 		bool UpdateTuple(const RID& rid, const Tuple& tuple);
 
 		std::vector<Tuple> Scan();
+
+		std::vector<Index<int>*>indexes_;
 
 	private:
 		BufferPoolManager* buffer_pool_manager_;
